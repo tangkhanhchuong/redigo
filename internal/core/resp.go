@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"strings"
 )
 
 const CRLF string = "\r\n"
@@ -92,7 +93,7 @@ func Decode(data []byte) (interface{}, error) {
 	return res, err
 }
 
-func ReadRESPCommand(data []byte) (*RedigoCmd, error) {
+func ParseCmd(data []byte) (*RedigoCmd, error) {
 	val, err := Decode(data)
 	if err != nil {
 		return nil, err
@@ -112,5 +113,5 @@ func ReadRESPCommand(data []byte) (*RedigoCmd, error) {
 		tokens[i] = str
 	}
 
-	return &RedigoCmd{Cmd: tokens[0], Args: tokens[1:]}, nil
+	return &RedigoCmd{Cmd: strings.ToUpper(tokens[0]), Args: tokens[1:]}, nil
 }

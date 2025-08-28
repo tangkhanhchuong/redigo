@@ -116,7 +116,7 @@ func TestArrayDecode(t *testing.T) {
 func TestParseCmd(t *testing.T) {
 	cases := map[string]core.RedigoCmd{
 		"*3\r\n$3\r\nput\r\n$5\r\nhello\r\n$5\r\nworld\r\n": {
-			Cmd:  "put",
+			Cmd:  "PUT",
 			Args: []string{"hello", "world"},
 		},
 		"*2\r\n$4\r\nECHO\r\n$5\r\nhello\r\n": {
@@ -127,7 +127,7 @@ func TestParseCmd(t *testing.T) {
 
 	for input, expected := range cases {
 		t.Run(expected.Cmd, func(t *testing.T) {
-			cmd, err := core.ReadRESPCommand([]byte(input))
+			cmd, err := core.ParseCmd([]byte(input))
 			if err != nil {
 				t.Fatalf("unexpected error: %v", err)
 			}
