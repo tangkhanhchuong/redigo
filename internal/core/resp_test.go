@@ -114,7 +114,7 @@ func TestArrayDecode(t *testing.T) {
 }
 
 func TestParseCmd(t *testing.T) {
-	cases := map[string]core.RedigoCmd{
+	cases := map[string]core.RedigoCommand{
 		"*3\r\n$3\r\nput\r\n$5\r\nhello\r\n$5\r\nworld\r\n": {
 			Cmd:  "PUT",
 			Args: []string{"hello", "world"},

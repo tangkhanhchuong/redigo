@@ -1,6 +1,6 @@
 package core
 
-type RedigoCmd struct {
+type RedigoCommand struct {
 	Cmd  string
 	Args []string
 }

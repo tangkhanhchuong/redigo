@@ -2,10 +2,11 @@ package core
 
 import (
 	"errors"
+	"fmt"
 	"strings"
-)
 
-const CRLF string = "\r\n"
+	"redigo/constant"
+)
 
 // +OK\r\n => OK
 func readSimpleString(data []byte) (string, int, error) {
@@ -93,7 +94,41 @@ func Decode(data []byte) (interface{}, error) {
 	return res, err
 }
 
-func ParseCmd(data []byte) (*RedigoCmd, error) {
+func encodeBulkString(str string) []byte {
+	return []byte(fmt.Sprintf("$%d\r\n%s\r\n", len(str), str))
+}
+
+func encodeStringArray(strs []string) []byte {
+	var sb strings.Builder
+	for _, str := range strs {
+		sb.WriteString(string(encodeBulkString(str)))
+	}
+	return []byte(fmt.Sprintf("*%d\r\n%s", len(strs), sb.String()))
+}
+
+func Encode(value interface{}, isSimpleString bool) []byte {
+	switch v := value.(type) {
+	case string:
+		if isSimpleString {
+			return []byte(fmt.Sprintf("+%s\r\n", v))
+		}
+		return encodeBulkString(v)
+	case int64, int32, int16, int8, int, uint64, uint32, uint16, uint8, uint:
+		return []byte(fmt.Sprintf(":%d\r\n", v))
+	case error:
+		return []byte(fmt.Sprintf("-%s\r\n", v))
+	case []string:
+		return encodeStringArray(value.([]string))
+	case [][]string:
+		return constant.RespNil
+	case []interface{}:
+		return constant.RespNil
+	default:
+		return constant.RespNil
+	}
+}
+
+func ParseCmd(data []byte) (*RedigoCommand, error) {
 	val, err := Decode(data)
 	if err != nil {
 		return nil, err
@@ -113,5 +148,5 @@ func ParseCmd(data []byte) (*RedigoCmd, error) {
 		tokens[i] = str
 	}
 
-	return &RedigoCmd{Cmd: strings.ToUpper(tokens[0]), Args: tokens[1:]}, nil
+	return &RedigoCommand{Cmd: strings.ToUpper(tokens[0]), Args: tokens[1:]}, nil
 }

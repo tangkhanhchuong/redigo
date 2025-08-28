@@ -12,7 +12,7 @@ import (
 	"redigo/internal/core/io_multiplexing"
 )
 
-func readCommand(fd int) (*core.RedigoCmd, error) {
+func readCommand(fd int) (*core.RedigoCommand, error) {
 	var buf = make([]byte, 512)
 	n, err := syscall.Read(fd, buf)
 	if err != nil {
@@ -95,10 +95,11 @@ func RunIoMultiplexingServer() error {
 					continue
 				}
 				log.Printf("parsed command: %+v\n", cmd)
-				if _, err := syscall.Write(events[i].Fd, []byte("+PONG\r\n")); err != nil {
-					return err
+
+				data := core.ExecuteCommand(cmd)
+				if _, err := syscall.Write(events[i].Fd, data); err != nil {
+					log.Println("error write: ", err)
 				}
-				return nil
 			}
 		}
 	}
