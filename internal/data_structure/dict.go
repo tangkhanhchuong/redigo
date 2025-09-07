@@ -9,7 +9,7 @@ type Dict struct {
 	keyExpiryStore map[string]uint64
 }
 
-func CreateDict() *Dict {
+func NewDict() *Dict {
 	return &Dict{
 		keyValStore:    make(map[string]interface{}),
 		keyExpiryStore: make(map[string]uint64),

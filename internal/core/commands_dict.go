@@ -2,14 +2,15 @@ package core
 
 import (
 	"errors"
-	"redigo/constant"
 	"strconv"
 	"time"
+
+	"redigo/constant"
 )
 
 func cmdPING(args []string) []byte {
 	if len(args) > 1 {
-		return Encode(errors.New("(error) wrong number of arguments for 'ping' command"), false)
+		return Encode(errors.New("ERR wrong number of arguments for 'ping' command"), false)
 	}
 
 	if len(args) == 0 {
@@ -20,10 +21,10 @@ func cmdPING(args []string) []byte {
 
 func cmdSET(args []string) []byte {
 	if len(args) < 2 {
-		return Encode(errors.New("(error) ERR wrong number of arguments for command"), false)
+		return Encode(errors.New("ERR wrong number of arguments for 'set' command"), false)
 	}
 	if len(args) == 3 || len(args) > 4 {
-		return Encode(errors.New("(error) syntax error"), false)
+		return Encode(errors.New("ERR syntax error"), false)
 	}
 
 	var ttlMs int64 = -1
@@ -31,7 +32,7 @@ func cmdSET(args []string) []byte {
 	if len(args) > 2 {
 		ttlSec, err := strconv.ParseInt(args[3], 10, 64)
 		if err != nil {
-			return Encode(errors.New("(error) value is not an integer or out of range"), false)
+			return Encode(errors.New("ERR value is not an integer or out of range"), false)
 		}
 		ttlMs = ttlSec * 1000
 	}
@@ -45,7 +46,7 @@ func cmdSET(args []string) []byte {
 
 func cmdGET(args []string) []byte {
 	if len(args) != 1 {
-		return Encode(errors.New("(error) ERR wrong number of arguments for command"), false)
+		return Encode(errors.New("ERR wrong number of arguments for 'get' command"), false)
 	}
 
 	key := args[0]
@@ -61,9 +62,23 @@ func cmdGET(args []string) []byte {
 	return Encode(val, false)
 }
 
+func cmdDEL(args []string) []byte {
+	if len(args) == 0 {
+		return Encode(errors.New("ERR wrong number of arguments for 'del' command"), false)
+	}
+
+	count := 0
+	for _, key := range args {
+		dictStore.Del(key)
+		count += 1
+	}
+
+	return Encode(count, false)
+}
+
 func cmdTTL(args []string) []byte {
 	if len(args) != 1 {
-		return Encode(errors.New("(error) ERR wrong number of arguments for command"), false)
+		return Encode(errors.New("ERR wrong number of arguments for 'ttl' command"), false)
 	}
 
 	key := args[0]
