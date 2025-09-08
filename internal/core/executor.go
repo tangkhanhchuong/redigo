@@ -4,6 +4,7 @@ import (
 	"log"
 )
 
+// TODO: Implement ZRANGE, ZCARD, ZCOUNT, ZREM
 func ExecuteCommand(cmd *RedigoCommand) []byte {
 	log.Printf("parsed command: %+v\n", cmd)
 
@@ -29,6 +30,12 @@ func ExecuteCommand(cmd *RedigoCommand) []byte {
 		res = cmdSISMEMBER(cmd.Args)
 	case "SCARD":
 		res = cmdSCARD(cmd.Args)
+	case "ZADD":
+		res = cmdZADD(cmd.Args)
+	case "ZSCORE":
+		res = cmdZSCORE(cmd.Args)
+	case "ZRANK":
+		res = cmdZRANK(cmd.Args)
 	default:
 		res = []byte("-unknown command '" + cmd.Cmd + "'\r\n")
 	}
