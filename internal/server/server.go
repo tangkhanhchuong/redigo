@@ -6,7 +6,9 @@ import (
 	"net"
 	"strconv"
 	"syscall"
+	"time"
 
+	"redigo/constant"
 	"redigo/internal/config"
 	"redigo/internal/core"
 	"redigo/internal/core/io_multiplexing"
@@ -59,6 +61,14 @@ func RunIoMultiplexingServer() error {
 	}); err != nil {
 		log.Fatal(err)
 	}
+
+	go func() {
+		ticker := time.NewTicker(constant.ActiveExpireFrequency)
+		defer ticker.Stop()
+		for range ticker.C {
+			core.ActiveDeleteExpiredKeys()
+		}
+	}()
 
 	for {
 		events, err := ioMultipler.Wait()

@@ -19,13 +19,13 @@ redis-cli -p 3000
 	- [X] PING
 	- [X] SET, GET, DEL, TTL, EXPIRE
 	- [X] SADD, SREM, SCARD, SMEMEBERS, SISMEMBER, SRAND, SPOP
-	- [ ] ZADD, ZRANK, ZREM, ZSCORE, ZCARD
+	- [X] ZADD, ZRANK, ZREM, ZSCORE, ZCARD
 	- [ ] GEOADD, GEODIST, GEOHASH, GEOSEARCH, GEOPOS
 	- [ ] BF.RESERVE, BF.INFO, BF.MADD, BF.EXISTS, BF.MEXISTS
 	- [ ] CMS.INITBYDIM, CMS.INITBYPROB, CMS.INCRBY, CMS.QUERY
 - Data structures:
 - [X] Hashtable
-- [ ] Skiplist
+- [X] Skiplist
 - [ ] Geohash
 - [ ] Scalable Bloom Filter
 - [ ] Count-min sketch
